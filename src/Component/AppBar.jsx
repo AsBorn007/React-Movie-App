@@ -28,13 +28,15 @@ const Search = styled("div")(({ theme }) => ({
   },
 
   width: "100%",
+  flex: 1,
+  minWidth: 0,
 
   [theme.breakpoints.up("sm")]: {
-    width: "280px",
+    flex: "0 1 280px",
   },
 
   [theme.breakpoints.up("md")]: {
-    width: "340px",
+    flex: "0 1 340px",
   },
 }));
 
@@ -43,7 +45,7 @@ const SearchIconWrapper = styled("div")(() => ({
   left: 0,
   top: 0,
   height: "100%",
-  width: "45px",
+  width: "42px",
 
   display: "flex",
   alignItems: "center",
@@ -58,7 +60,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   width: "100%",
 
   "& .MuiInputBase-input": {
-    padding: theme.spacing(1.3, 1.5, 1.3, 5.5),
+    padding: theme.spacing(1.25, 1, 1.25, 5),
     fontSize: "14px",
 
     "&::placeholder": {
@@ -69,31 +71,40 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const HeaderBar = () => {
+
   const [search, setSearch] = useState("");
- const [debounce , setDebaunce] =  useState(search)
- useEffect(()=>{
-    const timer = setTimeout(()=>{
-        setDebaunce(search)
-    },800)
-   return () => clearTimeout(timer)
- },[search])
+  const [debounce, setDebounce] = useState(search);
+
   useEffect(() => {
-    if(!debounce) return  
+    const timer = setTimeout(() => {
+      setDebounce(search);
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+
+    if (!debounce) return;
+
     const fetchData = async () => {
-    
       try {
+
         let res = await fetch(
-          `https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_MOVIES_APP_API}&query=${search}`
-          ,
+          `https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_MOVIES_APP_API}&query=${debounce}`
         );
-        console.log("serched data", res);
-        let data = await res.json()
-        console.log(data)
+
+        let data = await res.json();
+
+        console.log("searched data", data);
+
       } catch (error) {
         console.log(error);
       }
     };
+
     fetchData();
+
   }, [debounce]);
 
   const searchOnChange = (e) => {
@@ -103,68 +114,105 @@ const HeaderBar = () => {
   return (
     <Box
       sx={{
-        flexGrow: 1,
+        width: "100%",
         backgroundColor: "#111827",
         borderBottom: "1px solid rgba(255,255,255,0.08)",
       }}
     >
+
       <AppBar
         position="sticky"
         elevation={0}
-        className="han vidu"
         sx={{
-          maxWidth: "1280px",
+          width: "100%",
           backgroundColor: "#111827",
         }}
       >
+
         <Toolbar
           sx={{
-            minHeight: "70px !important",
-            px: {
-              xs: 2,
-              sm: 3,
-              md: 5,
+            width: "100%",
+            maxWidth: "1280px",
+            margin: "0 auto",
+
+            minHeight: {
+              xs: "62px !important",
+              sm: "70px !important",
             },
-            gap: 2,
+
+            px: {
+              xs: 1.5,
+              sm: 3,
+              md: 4,
+              lg: 5,
+            },
+
+            gap: {
+              xs: 1,
+              sm: 2,
+            },
           }}
         >
+
           {/* Mobile Menu */}
           <IconButton
-            size="large"
+            size="medium"
             edge="start"
             sx={{
               color: "#fff",
+
               display: {
                 xs: "flex",
                 md: "none",
               },
+
+              flexShrink: 0,
             }}
           >
             <MenuIcon />
           </IconButton>
+
 
           {/* Logo */}
           <Box
             sx={{
               display: "flex",
               alignItems: "center",
-              gap: 1,
+              gap: {
+                xs: 0.5,
+                sm: 1,
+              },
+
               mr: {
                 xs: 0,
-                md: 3,
+                md: 2,
+                lg: 3,
               },
+
+              flexShrink: 0,
             }}
           >
+
             <MovieIcon
               sx={{
-                fontSize: 32,
+                fontSize: {
+                  xs: 26,
+                  sm: 30,
+                  md: 32,
+                },
+
                 color: "#f5c518",
               }}
             />
 
             <Typography
-              variant="h6"
               sx={{
+                fontSize: {
+                  xs: "18px",
+                  sm: "21px",
+                  md: "24px",
+                },
+
                 fontWeight: 800,
                 letterSpacing: "-0.5px",
                 color: "#fff",
@@ -172,7 +220,9 @@ const HeaderBar = () => {
             >
               Movie<span style={{ color: "#f5c518" }}>Hub</span>
             </Typography>
+
           </Box>
+
 
           {/* Navigation */}
           <Box
@@ -181,11 +231,13 @@ const HeaderBar = () => {
                 xs: "none",
                 md: "flex",
               },
+
               alignItems: "center",
-              gap: 1,
+              gap: 0.5,
               flexGrow: 1,
             }}
           >
+
             <Button
               sx={{
                 color: "#fff",
@@ -233,10 +285,13 @@ const HeaderBar = () => {
             >
               Popular
             </Button>
+
           </Box>
+
 
           {/* Search */}
           <Search>
+
             <SearchIconWrapper>
               <SearchIcon fontSize="small" />
             </SearchIconWrapper>
@@ -249,33 +304,55 @@ const HeaderBar = () => {
                 "aria-label": "search movies",
               }}
             />
+
           </Search>
+
 
           {/* Profile */}
           <IconButton
             sx={{
-              width: 40,
-              height: 40,
+              width: {
+                xs: 34,
+                sm: 38,
+                md: 40,
+              },
+
+              height: {
+                xs: 34,
+                sm: 38,
+                md: 40,
+              },
+
               backgroundColor: "#f5c518",
               color: "#111827",
-              fontWeight: 700,
+              flexShrink: 0,
 
               "&:hover": {
                 backgroundColor: "#ffd740",
               },
             }}
           >
+
             <Typography
               sx={{
-                fontSize: 14,
+                fontSize: {
+                  xs: 11,
+                  sm: 13,
+                  md: 14,
+                },
+
                 fontWeight: 800,
               }}
             >
               PK
             </Typography>
+
           </IconButton>
+
         </Toolbar>
+
       </AppBar>
+
     </Box>
   );
 };
