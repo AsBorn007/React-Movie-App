@@ -17,6 +17,21 @@ const fetchMoviesData = createAsyncThunk(
     }
 )
 
+// const fetchSearchMovies = createAsyncThunk(
+//     'MoviesData/fetchSearchMovies',
+//     async (search) => {
+//         const API = import.meta.env.VITE_MOVIES_APP_API
+
+//         let res = await fetch(
+//             `https://api.themoviedb.org/3/search/movie?api_key=${API}&query=${search}`
+//         )
+
+//         let data = await res.json()
+
+//         return data.results
+//     }
+// )
+
 const MovieDataSlicer =  createSlice({
     name:"Movies",
     initialState,

@@ -9,252 +9,275 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import Button from "@mui/material/Button";
 import MovieIcon from "@mui/icons-material/Movie";
+import { useEffect, useState } from "react";
 
 const Search = styled("div")(({ theme }) => ({
-    position: "relative",
-    borderRadius: "10px",
-    backgroundColor: alpha(theme.palette.common.white, 0.08),
-    border: "1px solid rgba(255,255,255,0.12)",
-    transition: "all 0.3s ease",
+  position: "relative",
+  borderRadius: "10px",
+  backgroundColor: alpha(theme.palette.common.white, 0.08),
+  border: "1px solid rgba(255,255,255,0.12)",
+  transition: "all 0.3s ease",
 
-    "&:hover": {
-        backgroundColor: alpha(theme.palette.common.white, 0.12),
-    },
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.common.white, 0.12),
+  },
 
-    "&:focus-within": {
-        backgroundColor: alpha(theme.palette.common.white, 0.12),
-        borderColor: "rgba(255,255,255,0.3)",
-    },
+  "&:focus-within": {
+    backgroundColor: alpha(theme.palette.common.white, 0.12),
+    borderColor: "rgba(255,255,255,0.3)",
+  },
 
-    width: "100%",
+  width: "100%",
 
-    [theme.breakpoints.up("sm")]: {
-        width: "280px",
-    },
+  [theme.breakpoints.up("sm")]: {
+    width: "280px",
+  },
 
-    [theme.breakpoints.up("md")]: {
-        width: "340px",
-    },
+  [theme.breakpoints.up("md")]: {
+    width: "340px",
+  },
 }));
 
 const SearchIconWrapper = styled("div")(() => ({
-    position: "absolute",
-    left: 0,
-    top: 0,
-    height: "100%",
-    width: "45px",
+  position: "absolute",
+  left: 0,
+  top: 0,
+  height: "100%",
+  width: "45px",
 
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
 
-    color: "rgba(255,255,255,0.7)",
-    pointerEvents: "none",
+  color: "rgba(255,255,255,0.7)",
+  pointerEvents: "none",
 }));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
-    color: "#fff",
-    width: "100%",
+  color: "#fff",
+  width: "100%",
 
-    "& .MuiInputBase-input": {
-        padding: theme.spacing(1.3, 1.5, 1.3, 5.5),
-        fontSize: "14px",
+  "& .MuiInputBase-input": {
+    padding: theme.spacing(1.3, 1.5, 1.3, 5.5),
+    fontSize: "14px",
 
-        "&::placeholder": {
-            color: "rgba(255,255,255,0.6)",
-            opacity: 1,
-        },
+    "&::placeholder": {
+      color: "rgba(255,255,255,0.6)",
+      opacity: 1,
     },
+  },
 }));
 
 const HeaderBar = () => {
-    return (
-        <Box sx={{ flexGrow: 1,
-             backgroundColor: "#111827",
-                    borderBottom: "1px solid rgba(255,255,255,0.08)",
-         }}>
+  const [search, setSearch] = useState("");
+ const [debounce , setDebaunce] =  useState(search)
+ useEffect(()=>{
+    const timer = setTimeout(()=>{
+        setDebaunce(search)
+    },800)
+   return () => clearTimeout(timer)
+ },[search])
+  useEffect(() => {
+    if(!debounce) return  
+    const fetchData = async () => {
+    
+      try {
+        let res = await fetch(
+          `https://api.themoviedb.org/3/search/movie?api_key=${import.meta.env.VITE_MOVIES_APP_API}&query=${search}`
+          ,
+        );
+        console.log("serched data", res);
+        let data = await res.json()
+        console.log(data)
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchData();
+  }, [debounce]);
 
-            <AppBar
-                position="sticky"
-                elevation={0}
-                className="han vidu"
-                sx={{
-                   maxWidth:"1280px",
-                    backgroundColor: "#111827",
-                }}
+  const searchOnChange = (e) => {
+    setSearch(e.target.value);
+  };
+
+  return (
+    <Box
+      sx={{
+        flexGrow: 1,
+        backgroundColor: "#111827",
+        borderBottom: "1px solid rgba(255,255,255,0.08)",
+      }}
+    >
+      <AppBar
+        position="sticky"
+        elevation={0}
+        className="han vidu"
+        sx={{
+          maxWidth: "1280px",
+          backgroundColor: "#111827",
+        }}
+      >
+        <Toolbar
+          sx={{
+            minHeight: "70px !important",
+            px: {
+              xs: 2,
+              sm: 3,
+              md: 5,
+            },
+            gap: 2,
+          }}
+        >
+          {/* Mobile Menu */}
+          <IconButton
+            size="large"
+            edge="start"
+            sx={{
+              color: "#fff",
+              display: {
+                xs: "flex",
+                md: "none",
+              },
+            }}
+          >
+            <MenuIcon />
+          </IconButton>
+
+          {/* Logo */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              mr: {
+                xs: 0,
+                md: 3,
+              },
+            }}
+          >
+            <MovieIcon
+              sx={{
+                fontSize: 32,
+                color: "#f5c518",
+              }}
+            />
+
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 800,
+                letterSpacing: "-0.5px",
+                color: "#fff",
+              }}
             >
+              Movie<span style={{ color: "#f5c518" }}>Hub</span>
+            </Typography>
+          </Box>
 
-                <Toolbar
-                    sx={{
-                        minHeight: "70px !important",
-                        px: {
-                            xs: 2,
-                            sm: 3,
-                            md: 5,
-                        },
-                        gap: 2,
-                    }}
-                >
+          {/* Navigation */}
+          <Box
+            sx={{
+              display: {
+                xs: "none",
+                md: "flex",
+              },
+              alignItems: "center",
+              gap: 1,
+              flexGrow: 1,
+            }}
+          >
+            <Button
+              sx={{
+                color: "#fff",
+                textTransform: "none",
+                fontWeight: 600,
+                borderRadius: "8px",
+                px: 2,
 
-                    {/* Mobile Menu */}
-                    <IconButton
-                        size="large"
-                        edge="start"
-                        sx={{
-                            color: "#fff",
-                            display: {
-                                xs: "flex",
-                                md: "none",
-                            },
-                        }}
-                    >
-                        <MenuIcon />
-                    </IconButton>
+                "&:hover": {
+                  backgroundColor: "rgba(255,255,255,0.08)",
+                },
+              }}
+            >
+              Home
+            </Button>
 
+            <Button
+              sx={{
+                color: "rgba(255,255,255,0.7)",
+                textTransform: "none",
+                borderRadius: "8px",
+                px: 2,
 
-                    {/* Logo */}
-                    <Box
-                        sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                            mr: {
-                                xs: 0,
-                                md: 3,
-                            },
-                        }}
-                    >
-                        <MovieIcon
-                            sx={{
-                                fontSize: 32,
-                                color: "#f5c518",
-                            }}
-                        />
+                "&:hover": {
+                  color: "#fff",
+                  backgroundColor: "rgba(255,255,255,0.08)",
+                },
+              }}
+            >
+              Movies
+            </Button>
 
-                        <Typography
-                            variant="h6"
-                            sx={{
-                                fontWeight: 800,
-                                letterSpacing: "-0.5px",
-                                color: "#fff",
-                            }}
-                        >
-                            Movie<span style={{ color: "#f5c518" }}>Hub</span>
-                        </Typography>
-                    </Box>
+            <Button
+              sx={{
+                color: "rgba(255,255,255,0.7)",
+                textTransform: "none",
+                borderRadius: "8px",
+                px: 2,
 
+                "&:hover": {
+                  color: "#fff",
+                  backgroundColor: "rgba(255,255,255,0.08)",
+                },
+              }}
+            >
+              Popular
+            </Button>
+          </Box>
 
-                    {/* Navigation */}
-                    <Box
-                        sx={{
-                            display: {
-                                xs: "none",
-                                md: "flex",
-                            },
-                            alignItems: "center",
-                            gap: 1,
-                            flexGrow: 1,
-                        }}
-                    >
+          {/* Search */}
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon fontSize="small" />
+            </SearchIconWrapper>
 
-                        <Button
-                            sx={{
-                                color: "#fff",
-                                textTransform: "none",
-                                fontWeight: 600,
-                                borderRadius: "8px",
-                                px: 2,
+            <StyledInputBase
+              onChange={searchOnChange}
+              value={search}
+              placeholder="Search movies..."
+              inputProps={{
+                "aria-label": "search movies",
+              }}
+            />
+          </Search>
 
-                                "&:hover": {
-                                    backgroundColor: "rgba(255,255,255,0.08)",
-                                },
-                            }}
-                        >
-                            Home
-                        </Button>
+          {/* Profile */}
+          <IconButton
+            sx={{
+              width: 40,
+              height: 40,
+              backgroundColor: "#f5c518",
+              color: "#111827",
+              fontWeight: 700,
 
-                        <Button
-                            sx={{
-                                color: "rgba(255,255,255,0.7)",
-                                textTransform: "none",
-                                borderRadius: "8px",
-                                px: 2,
-
-                                "&:hover": {
-                                    color: "#fff",
-                                    backgroundColor: "rgba(255,255,255,0.08)",
-                                },
-                            }}
-                        >
-                            Movies
-                        </Button>
-
-                        <Button
-                            sx={{
-                                color: "rgba(255,255,255,0.7)",
-                                textTransform: "none",
-                                borderRadius: "8px",
-                                px: 2,
-
-                                "&:hover": {
-                                    color: "#fff",
-                                    backgroundColor: "rgba(255,255,255,0.08)",
-                                },
-                            }}
-                        >
-                            Popular
-                        </Button>
-
-                    </Box>
-
-
-                    {/* Search */}
-                    <Search>
-
-                        <SearchIconWrapper>
-                            <SearchIcon fontSize="small" />
-                        </SearchIconWrapper>
-
-                        <StyledInputBase
-                            placeholder="Search movies..."
-                            inputProps={{
-                                "aria-label": "search movies",
-                            }}
-                        />
-
-                    </Search>
-
-
-                    {/* Profile */}
-                    <IconButton
-                        sx={{
-                            width: 40,
-                            height: 40,
-                            backgroundColor: "#f5c518",
-                            color: "#111827",
-                            fontWeight: 700,
-
-                            "&:hover": {
-                                backgroundColor: "#ffd740",
-                            },
-                        }}
-                    >
-                        <Typography
-                            sx={{
-                                fontSize: 14,
-                                fontWeight: 800,
-                            }}
-                        >
-                            PK
-                        </Typography>
-                    </IconButton>
-
-                </Toolbar>
-
-            </AppBar>
-
-        </Box>
-    );
+              "&:hover": {
+                backgroundColor: "#ffd740",
+              },
+            }}
+          >
+            <Typography
+              sx={{
+                fontSize: 14,
+                fontWeight: 800,
+              }}
+            >
+              PK
+            </Typography>
+          </IconButton>
+        </Toolbar>
+      </AppBar>
+    </Box>
+  );
 };
 
 export default HeaderBar;
